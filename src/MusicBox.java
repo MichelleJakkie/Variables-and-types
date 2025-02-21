@@ -66,6 +66,11 @@ public class MusicBox {
             }
             
         }
+
+        /* // -- TODO */
+        public void displaySongDetails(){
+            System.out.println(songAlbum);
+        }
     
 }
 
