@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 class SliceoHeaven {
     private String storeName;
     private String storeAddress;
@@ -14,8 +15,22 @@ class SliceoHeaven {
     private List<String> drinks;
     private Map<String, Double> sidePrices;
     private Map<String, Double> drinkPrices;
-    private int orderID;
+    private String orderID;
     private double orderTotal;
+
+    private static final String DEF_ORDER_ID = "DEF-SOH-099";
+    private static final String DEF_PIZZA_INGREDIENTS = "Mozzarella Cheese";
+    private static final double DEF_ORDER_TOTAL = 15.00;
+
+    public SliceoHeaven() {
+        this.orderID = DEF_ORDER_ID;
+        this.pizzaIngredients = new ArrayList<>();
+        this.pizzaIngredients.add(DEF_PIZZA_INGREDIENTS);
+        this.orderTotal = DEF_ORDER_TOTAL;
+        this.sides = new ArrayList<>();
+        this.drinks = new ArrayList<>();
+    }
+
     public SliceoHeaven(String name, String address, String email, String phone, String menu, List<String> ingredients, double price,
                         List<String> sideItems, Map<String, Double> sideItemPrices, List<String> drinkItems, Map<String, Double> drinkItemPrices) {
         this.storeName = name;
@@ -29,71 +44,106 @@ class SliceoHeaven {
         this.sidePrices = sideItemPrices;
         this.drinks = drinkItems;
         this.drinkPrices = drinkItemPrices;
-        this.orderID = 0;
+        this.orderID = DEF_ORDER_ID;
         this.orderTotal = 0;
     }
+
+    public SliceoHeaven(String orderID, List<String> pizzaIngredients, double orderTotal) {
+        this.orderID = orderID;
+        this.pizzaIngredients = pizzaIngredients;
+        this.orderTotal = orderTotal;
+    }
+
     public String getStoreName() {
         return storeName;
     }
+
     public void setStoreName(String storeName) {
         this.storeName = storeName;
     }
+
     public String getStoreAddress() {
         return storeAddress;
     }
+
     public void setStoreAddress(String storeAddress) {
         this.storeAddress = storeAddress;
     }
+
     public String getStoreEmail() {
         return storeEmail;
     }
+
     public void setStoreEmail(String storeEmail) {
         this.storeEmail = storeEmail;
     }
+
     public String getStorePhone() {
         return storePhone;
     }
+
     public void setStorePhone(String storePhone) {
         this.storePhone = storePhone;
     }
+
     public String getStoreMenu() {
         return storeMenu;
     }
+
     public void setStoreMenu(String storeMenu) {
         this.storeMenu = storeMenu;
     }
+
     public List<String> getPizzaIngredients() {
         return pizzaIngredients;
     }
+
     public void setPizzaIngredients(List<String> pizzaIngredients) {
         this.pizzaIngredients = pizzaIngredients;
     }
+
     public double getPizzaPrice() {
         return pizzaPrice;
     }
+
     public void setPizzaPrice(double pizzaPrice) {
         this.pizzaPrice = pizzaPrice;
     }
+
     public List<String> getSides() {
         return sides;
     }
+
     public void setSides(List<String> sides) {
         this.sides = sides;
     }
+
     public List<String> getDrinks() {
         return drinks;
     }
+
     public void setDrinks(List<String> drinks) {
         this.drinks = drinks;
     }
-    public int getOrderID() {
+
+    public String getOrderID() {
         return orderID;
     }
+
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
+    }
+
     public double getOrderTotal() {
         return orderTotal;
     }
+
+    public void setOrderTotal(double orderTotal) {
+        this.orderTotal = orderTotal;
+    }
+
     public void takeOrder(int pizzaQuantity, List<String> selectedSides, List<String> selectedDrinks) {
-        orderID++;
+        this.orderID = "SOH-" + (Integer.parseInt(this.orderID.split("-")[2]) + 1);
         orderTotal = pizzaQuantity * pizzaPrice;
 
         for (String side : selectedSides) {
@@ -113,7 +163,9 @@ class SliceoHeaven {
         }
 
         System.out.println("Order ID: " + orderID + " has been placed.");
+        printReceipt();
     }
+
     public void makePizza() {
         System.out.println("Making a pizza with the following ingredients: ");
         for (String ingredient : pizzaIngredients) {
@@ -121,7 +173,8 @@ class SliceoHeaven {
         }
         System.out.println("Pizza is ready!");
     }
-    public void printReceipt() {
+
+    private void printReceipt() {
         System.out.println("----- Receipt -----");
         System.out.println("Store Name: " + storeName);
         System.out.println("Store Address: " + storeAddress);
@@ -130,6 +183,7 @@ class SliceoHeaven {
         System.out.println("-------------------");
     }
 }
+
 public class Pizza {
     public static void main(String[] args) {
         List<String> pizzaIngredients = new ArrayList<>();
@@ -157,6 +211,5 @@ public class Pizza {
         selectedDrinks.add("Coke");
         pizzeria.takeOrder(1, selectedSides, selectedDrinks);
         pizzeria.makePizza();
-        pizzeria.printReceipt();
     }
 }
