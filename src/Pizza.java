@@ -182,6 +182,44 @@ class SliceoHeaven {
         System.out.println("Order Total: $" + orderTotal);
         System.out.println("-------------------");
     }
+    public void processCardPayment(String cardNumber, String expiryDate, int cvv) {
+        int cardLength = cardNumber.length();
+        if (cardLength == 14) {
+            System.out.println("Card accepted");
+        } else {
+            System.out.println("Invalid card");
+        }
+
+        int firstCardDigit = Integer.parseInt(cardNumber.substring(0, 1));
+
+        String blacklistedNumber = "12345678901234";
+        if (cardNumber.equals(blacklistedNumber)) {
+            System.out.println("Card is blacklisted. Please use another card");
+        }
+
+        int lastFourDigits = Integer.parseInt(cardNumber.substring(cardNumber.length() - 4));
+
+        StringBuilder cardNumberToDisplay = new StringBuilder();
+        cardNumberToDisplay.append(cardNumber.charAt(0));
+        for (int i = 1; i < cardNumber.length() - 4; i++) {
+            cardNumberToDisplay.append('*');
+        }
+        cardNumberToDisplay.append(cardNumber.substring(cardNumber.length() - 4));
+
+        System.out.println("First card digit: " + firstCardDigit);
+        System.out.println("Last four digits: " + lastFourDigits);
+        System.out.println("Card number to display: " + cardNumberToDisplay);
+    }
+    public void specialOfTheDay(String pizzaOfTheDay, String sideOfTheDay, String specialPrice) {
+        StringBuilder specialInfo = new StringBuilder();
+        specialInfo.append("Today's special: ");
+        specialInfo.append(pizzaOfTheDay);
+        specialInfo.append(" with ");
+        specialInfo.append(sideOfTheDay);
+        specialInfo.append(" for only $");
+        specialInfo.append(specialPrice);
+        System.out.println(specialInfo.toString());
+    }
 }
 
 public class Pizza {
@@ -204,12 +242,13 @@ public class Pizza {
         drinkPrices.put("Sprite", 2.0);
         SliceoHeaven pizzeria = new SliceoHeaven("Slice - o - Heaven", "123 Pizza St", "info@sliceoheaven.com", "555 - 1234",
                 "Pizza, Sides, Drinks", pizzaIngredients, 10.0, sides, sidePrices, drinks, drinkPrices);
-
         List<String> selectedSides = new ArrayList<>();
         selectedSides.add("Garlic Bread");
         List<String> selectedDrinks = new ArrayList<>();
         selectedDrinks.add("Coke");
         pizzeria.takeOrder(1, selectedSides, selectedDrinks);
         pizzeria.makePizza();
+        pizzeria.processCardPayment("12345678901234", "12/25", 123);
+        pizzeria.specialOfTheDay("Margherita Pizza", "Fries", "12.99");
     }
 }
