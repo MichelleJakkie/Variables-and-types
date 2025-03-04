@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.Period;
 
 class SliceoHeaven {
     private String storeName;
@@ -142,28 +145,119 @@ class SliceoHeaven {
         this.orderTotal = orderTotal;
     }
 
-    public void takeOrder(int pizzaQuantity, List<String> selectedSides, List<String> selectedDrinks) {
-        this.orderID = "SOH-" + (Integer.parseInt(this.orderID.split("-")[2]) + 1);
-        orderTotal = pizzaQuantity * pizzaPrice;
-
-        for (String side : selectedSides) {
-            if (sidePrices.containsKey(side)) {
-                orderTotal += sidePrices.get(side);
+    public void takeOrder() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Enter three ingredients for your pizza (use spaces to separate ingredients):");
+            String ingLine = scanner.nextLine();
+            String[] ingredients = ingLine.split("\\s+");
+            pizzaIngredients.clear();
+            if (ingredients.length >= 1) {
+                pizzaIngredients.add(ingredients[0]);
+            }
+            if (ingredients.length >= 2) {
+                pizzaIngredients.add(ingredients[1]);
+            }
+            if (ingredients.length >= 3) {
+                pizzaIngredients.add(ingredients[2]);
+            }
+            System.out.println("Enter size of pizza (Small, Medium, Large):");
+            System.out.println("Do you want extra cheese (Y/N):");
+            String extraCheese = scanner.nextLine();
+            if (extraCheese.equalsIgnoreCase("Y")) {
+                pizzaIngredients.add("Extra Cheese");
+            }
+            System.out.println("Enter one side dish (Calzone, Garlic bread, None):");
+            String sideDish = scanner.nextLine();
+            sides.clear();
+            if (!sideDish.equalsIgnoreCase("None")) {
+                sides.add(sideDish);
+            }
+            System.out.println("Enter drinks (Cold Coffee, Cocoa drink, Coke, None):");
+            String drinkInput = scanner.nextLine();
+            drinks.clear();
+            if (!drinkInput.equalsIgnoreCase("None")) {
+                drinks.add(drinkInput);
+            }
+            orderTotal = pizzaPrice; 
+            for (String side : sides) {
+                if (sidePrices != null && sidePrices.containsKey(side)) {
+                    orderTotal += sidePrices.get(side);
+                }
+            }
+            for (String drink : drinks) {
+                if (drinkPrices != null && drinkPrices.containsKey(drink)) {
+                    orderTotal += drinkPrices.get(drink);
+                }
+            }
+            System.out.println("Would you like the chance to pay only half for your order? (Y/N):");
+            String wantDiscount = scanner.nextLine();
+            if (wantDiscount.equalsIgnoreCase("Y")) {
+                isItYourBirthday();
             } else {
-                System.out.println("Warning: " + side + " is not in the side menu.");
+                makeCardPayment();
             }
         }
-
-        for (String drink : selectedDrinks) {
-            if (drinkPrices.containsKey(drink)) {
-                orderTotal += drinkPrices.get(drink);
-            } else {
-                System.out.println("Warning: " + drink + " is not in the drink menu.");
-            }
-        }
-
-        System.out.println("Order ID: " + orderID + " has been placed.");
+        String[] parts = orderID.split("-");
+        int num = Integer.parseInt(parts[2]);
+        num++;
+        orderID = parts[0] + "-" + parts[1] + "-" + num;
         printReceipt();
+    }
+    public void isItYourBirthday() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Enter your birthday (yyyy-MM-dd):");
+            String birthdateStr = scanner.nextLine();
+            LocalDate birthdate = LocalDate.parse(birthdateStr);
+            LocalDate today = LocalDate.now();
+            int age = Period.between(birthdate, today).getYears();
+            if (age < 18 && birthdate.getMonth() == today.getMonth() && birthdate.getDayOfMonth() == today.getDayOfMonth()) {
+                System.out.println("Congratulations! You pay only half the price for your order");
+                orderTotal = orderTotal / 2;
+            } else {
+                System.out.println("Too bad! You do not meet the conditions to get our 50% discount");
+            }
+        }
+    }
+    public void makeCardPayment() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Enter card number:");
+            long cardNumber = scanner.nextLong();
+            scanner.nextLine(); 
+            System.out.println("Enter card expiry date (MM/yy):");
+            String expiryDate = scanner.nextLine();
+            System.out.println("Enter card cvv (3 digits):");
+            int cvv = scanner.nextInt();
+            processCardPayment(cardNumber, expiryDate, cvv);
+        }
+    }
+    public void processCardPayment(long cardNumber, String expiryDate, int cvv) {
+        String cardNumberStr = Long.toString(cardNumber);
+        if (cardNumberStr.length() == 14) {
+            System.out.println("Card accepted");
+        } else {
+            System.out.println("Invalid card");
+        }
+
+        int firstCardDigit = Integer.parseInt(cardNumberStr.substring(0, 1));
+
+        long blacklistedNumber = 12345678901234L;
+        if (cardNumber == blacklistedNumber) {
+            System.out.println("Card is blacklisted. Please use another card");
+        }
+
+        String lastFourDigitsStr = cardNumberStr.substring(cardNumberStr.length() - 4);
+        int lastFourDigits = Integer.parseInt(lastFourDigitsStr);
+
+        StringBuilder cardNumberToDisplay = new StringBuilder();
+        cardNumberToDisplay.append(cardNumberStr.charAt(0));
+        for (int i = 1; i < cardNumberStr.length() - 4; i++) {
+            cardNumberToDisplay.append('*');
+        }
+        cardNumberToDisplay.append(lastFourDigitsStr);
+
+        System.out.println("First card digit: " + firstCardDigit);
+        System.out.println("Last four digits: " + lastFourDigits);
+        System.out.println("Card number to display: " + cardNumberToDisplay);
     }
 
     public void makePizza() {
@@ -173,7 +267,6 @@ class SliceoHeaven {
         }
         System.out.println("Pizza is ready!");
     }
-
     private void printReceipt() {
         System.out.println("----- Receipt -----");
         System.out.println("Store Name: " + storeName);
@@ -182,34 +275,7 @@ class SliceoHeaven {
         System.out.println("Order Total: $" + orderTotal);
         System.out.println("-------------------");
     }
-    public void processCardPayment(String cardNumber, String expiryDate, int cvv) {
-        int cardLength = cardNumber.length();
-        if (cardLength == 14) {
-            System.out.println("Card accepted");
-        } else {
-            System.out.println("Invalid card");
-        }
 
-        int firstCardDigit = Integer.parseInt(cardNumber.substring(0, 1));
-
-        String blacklistedNumber = "12345678901234";
-        if (cardNumber.equals(blacklistedNumber)) {
-            System.out.println("Card is blacklisted. Please use another card");
-        }
-
-        int lastFourDigits = Integer.parseInt(cardNumber.substring(cardNumber.length() - 4));
-
-        StringBuilder cardNumberToDisplay = new StringBuilder();
-        cardNumberToDisplay.append(cardNumber.charAt(0));
-        for (int i = 1; i < cardNumber.length() - 4; i++) {
-            cardNumberToDisplay.append('*');
-        }
-        cardNumberToDisplay.append(cardNumber.substring(cardNumber.length() - 4));
-
-        System.out.println("First card digit: " + firstCardDigit);
-        System.out.println("Last four digits: " + lastFourDigits);
-        System.out.println("Card number to display: " + cardNumberToDisplay);
-    }
     public void specialOfTheDay(String pizzaOfTheDay, String sideOfTheDay, String specialPrice) {
         StringBuilder specialInfo = new StringBuilder();
         specialInfo.append("Today's special: ");
@@ -240,15 +306,12 @@ public class Pizza {
         Map<String, Double> drinkPrices = new HashMap<>();
         drinkPrices.put("Coke", 2.0);
         drinkPrices.put("Sprite", 2.0);
-        SliceoHeaven pizzeria = new SliceoHeaven("Slice - o - Heaven", "123 Pizza St", "info@sliceoheaven.com", "555 - 1234",
+        
+        SliceoHeaven pizzeria = new SliceoHeaven("Slice - o - Heaven", "123 Pizza St", "info@sliceoheaven.com", "555-1234",
                 "Pizza, Sides, Drinks", pizzaIngredients, 10.0, sides, sidePrices, drinks, drinkPrices);
-        List<String> selectedSides = new ArrayList<>();
-        selectedSides.add("Garlic Bread");
-        List<String> selectedDrinks = new ArrayList<>();
-        selectedDrinks.add("Coke");
-        pizzeria.takeOrder(1, selectedSides, selectedDrinks);
+        pizzeria.takeOrder();
+        
         pizzeria.makePizza();
-        pizzeria.processCardPayment("12345678901234", "12/25", 123);
         pizzeria.specialOfTheDay("Margherita Pizza", "Fries", "12.99");
     }
 }
