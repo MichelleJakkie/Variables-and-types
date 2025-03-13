@@ -1,317 +1,275 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.time.LocalDate;
-import java.time.Period;
+enum PizzaSelection {
+    PEPPERONI("Pepperoni", "Lots of pepperoni and extra cheese", 18),
+    HAWAIIAN("Hawaiian", "Pineapple, ham, and extra cheese", 22),
+    VEGGIE("Veggie", "Green pepper, onion, tomatoes, mushroom, and black olives", 25),
+    BBQ_CHICKEN("BBQ Chicken", "Chicken in BBQ sauce, bacon, onion, green pepper, and cheddar cheese", 35),
+    EXTRAVAGANZA("Extravaganza", "Pepperoni, ham, Italian sausage, beef, onions, green pepper, mushrooms, black olives, and extra cheese", 45);
 
-class SliceoHeaven {
-    private String storeName;
-    private String storeAddress;
-    private String storeEmail;
-    private String storePhone;
-    private String storeMenu;
-    private List<String> pizzaIngredients;
-    private double pizzaPrice;
-    private List<String> sides;
-    private List<String> drinks;
-    private Map<String, Double> sidePrices;
-    private Map<String, Double> drinkPrices;
-    private String orderID;
-    private double orderTotal;
+    private final String pizzaName;
+    private final String pizzaToppings;
+    private final int price;
 
-    private static final String DEF_ORDER_ID = "DEF-SOH-099";
-    private static final String DEF_PIZZA_INGREDIENTS = "Mozzarella Cheese";
-    private static final double DEF_ORDER_TOTAL = 15.00;
-
-    public SliceoHeaven() {
-        this.orderID = DEF_ORDER_ID;
-        this.pizzaIngredients = new ArrayList<>();
-        this.pizzaIngredients.add(DEF_PIZZA_INGREDIENTS);
-        this.orderTotal = DEF_ORDER_TOTAL;
-        this.sides = new ArrayList<>();
-        this.drinks = new ArrayList<>();
+    PizzaSelection(String pizzaName, String pizzaToppings, int price) {
+        this.pizzaName = pizzaName;
+        this.pizzaToppings = pizzaToppings;
+        this.price = price;
     }
 
-    public SliceoHeaven(String name, String address, String email, String phone, String menu, List<String> ingredients, double price,
-                        List<String> sideItems, Map<String, Double> sideItemPrices, List<String> drinkItems, Map<String, Double> drinkItemPrices) {
-        this.storeName = name;
-        this.storeAddress = address;
-        this.storeEmail = email;
-        this.storePhone = phone;
-        this.storeMenu = menu;
-        this.pizzaIngredients = ingredients;
-        this.pizzaPrice = price;
-        this.sides = sideItems;
-        this.sidePrices = sideItemPrices;
-        this.drinks = drinkItems;
-        this.drinkPrices = drinkItemPrices;
-        this.orderID = DEF_ORDER_ID;
-        this.orderTotal = 0;
+    public String getPizzaName() {
+        return pizzaName;
     }
 
-    public SliceoHeaven(String orderID, List<String> pizzaIngredients, double orderTotal) {
-        this.orderID = orderID;
-        this.pizzaIngredients = pizzaIngredients;
-        this.orderTotal = orderTotal;
+    public String getPizzaToppings() {
+        return pizzaToppings;
     }
 
-    public String getStoreName() {
-        return storeName;
+    public int getPrice() {
+        return price;
     }
 
-    public void setStoreName(String storeName) {
-        this.storeName = storeName;
+    @Override
+    public String toString() {
+        return pizzaName + " Pizza with " + pizzaToppings + ", for €" + price;
+    }
+}
+enum PizzaToppings {
+    HAM("Ham", 2),
+    PEPPERONI("Pepperoni", 2),
+    BEEF("Beef", 2),
+    CHICKEN("Chicken", 2),
+    SAUSAGE("Sausage", 2),
+    PINEAPPLE("Pineapple", 1),
+    ONION("Onion", 0.5),
+    TOMATOES("Tomatoes", 0.4),
+    GREEN_PEPPER("Green Pepper", 0.5),
+    BLACK_OLIVES("Black Olives", 0.5),
+    SPINACH("Spinach", 0.5),
+    CHEDDAR_CHEESE("Cheddar Cheese", 0.8),
+    MOZZARELLA_CHEESE("Mozzarella Cheese", 0.8),
+    FETA_CHEESE("Feta Cheese", 1),
+    PARMESAN_CHEESE("Parmesan Cheese", 1);
+
+    private final String topping;
+    private final double toppingPrice;
+
+    PizzaToppings(String topping, double toppingPrice) {
+        this.topping = topping;
+        this.toppingPrice = toppingPrice;
     }
 
-    public String getStoreAddress() {
-        return storeAddress;
+    public String getTopping() {
+        return topping;
     }
 
-    public void setStoreAddress(String storeAddress) {
-        this.storeAddress = storeAddress;
+    public double getToppingPrice() {
+        return toppingPrice;
     }
 
-    public String getStoreEmail() {
-        return storeEmail;
+    @Override
+    public String toString() {
+        return topping + ": €" + toppingPrice;
+    }
+}
+enum PizzaSize {
+    LARGE("Large", 10),
+    MEDIUM("Medium", 5),
+    SMALL("Small", 0);
+
+    private final String pizzaSize;
+    private final int addToPizzaPrice;
+
+    PizzaSize(String pizzaSize, int addToPizzaPrice) {
+        this.pizzaSize = pizzaSize;
+        this.addToPizzaPrice = addToPizzaPrice;
     }
 
-    public void setStoreEmail(String storeEmail) {
-        this.storeEmail = storeEmail;
+    public String getPizzaSize() {
+        return pizzaSize;
     }
 
-    public String getStorePhone() {
-        return storePhone;
+    public int getAddToPizzaPrice() {
+        return addToPizzaPrice;
     }
 
-    public void setStorePhone(String storePhone) {
-        this.storePhone = storePhone;
+    @Override
+    public String toString() {
+        return pizzaSize + ": €" + addToPizzaPrice;
+    }
+}
+enum SideDish {
+    CALZONE("Calzone", 15),
+    CHICKEN_PUFF("Chicken Puff", 20),
+    MUFFIN("Muffin", 12),
+    NOTHING("No side dish", 0);
+
+    private final String sideDishName;
+    private final int addToPizzaPrice;
+
+    SideDish(String sideDishName, int addToPizzaPrice) {
+        this.sideDishName = sideDishName;
+        this.addToPizzaPrice = addToPizzaPrice;
     }
 
-    public String getStoreMenu() {
-        return storeMenu;
+    public String getSideDishName() {
+        return sideDishName;
     }
 
-    public void setStoreMenu(String storeMenu) {
-        this.storeMenu = storeMenu;
+    public int getAddToPizzaPrice() {
+        return addToPizzaPrice;
     }
 
-    public List<String> getPizzaIngredients() {
-        return pizzaIngredients;
+    @Override
+    public String toString() {
+        return sideDishName + ": €" + addToPizzaPrice;
+    }
+}
+enum Drinks {
+    COCA_COLA("Coca Cola", 8),
+    COCOA_DRINK("Cocoa Drink", 10),
+    NOTHING("No drinks", 0);
+
+    private final String drinkName;
+    private final int addToPizzaPrice;
+
+    Drinks(String drinkName, int addToPizzaPrice) {
+        this.drinkName = drinkName;
+        this.addToPizzaPrice = addToPizzaPrice;
     }
 
-    public void setPizzaIngredients(List<String> pizzaIngredients) {
-        this.pizzaIngredients = pizzaIngredients;
+    public String getDrinkName() {
+        return drinkName;
     }
 
-    public double getPizzaPrice() {
-        return pizzaPrice;
+    public int getAddToPizzaPrice() {
+        return addToPizzaPrice;
     }
 
-    public void setPizzaPrice(double pizzaPrice) {
-        this.pizzaPrice = pizzaPrice;
-    }
-
-    public List<String> getSides() {
-        return sides;
-    }
-
-    public void setSides(List<String> sides) {
-        this.sides = sides;
-    }
-
-    public List<String> getDrinks() {
-        return drinks;
-    }
-
-    public void setDrinks(List<String> drinks) {
-        this.drinks = drinks;
-    }
-
-    public String getOrderID() {
-        return orderID;
-    }
-
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
-    }
-
-    public double getOrderTotal() {
-        return orderTotal;
-    }
-
-    public void setOrderTotal(double orderTotal) {
-        this.orderTotal = orderTotal;
-    }
-
-    public void takeOrder() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            System.out.println("Enter three ingredients for your pizza (use spaces to separate ingredients):");
-            String ingLine = scanner.nextLine();
-            String[] ingredients = ingLine.split("\\s+");
-            pizzaIngredients.clear();
-            if (ingredients.length >= 1) {
-                pizzaIngredients.add(ingredients[0]);
-            }
-            if (ingredients.length >= 2) {
-                pizzaIngredients.add(ingredients[1]);
-            }
-            if (ingredients.length >= 3) {
-                pizzaIngredients.add(ingredients[2]);
-            }
-            System.out.println("Enter size of pizza (Small, Medium, Large):");
-            System.out.println("Do you want extra cheese (Y/N):");
-            String extraCheese = scanner.nextLine();
-            if (extraCheese.equalsIgnoreCase("Y")) {
-                pizzaIngredients.add("Extra Cheese");
-            }
-            System.out.println("Enter one side dish (Calzone, Garlic bread, None):");
-            String sideDish = scanner.nextLine();
-            sides.clear();
-            if (!sideDish.equalsIgnoreCase("None")) {
-                sides.add(sideDish);
-            }
-            System.out.println("Enter drinks (Cold Coffee, Cocoa drink, Coke, None):");
-            String drinkInput = scanner.nextLine();
-            drinks.clear();
-            if (!drinkInput.equalsIgnoreCase("None")) {
-                drinks.add(drinkInput);
-            }
-            orderTotal = pizzaPrice; 
-            for (String side : sides) {
-                if (sidePrices != null && sidePrices.containsKey(side)) {
-                    orderTotal += sidePrices.get(side);
-                }
-            }
-            for (String drink : drinks) {
-                if (drinkPrices != null && drinkPrices.containsKey(drink)) {
-                    orderTotal += drinkPrices.get(drink);
-                }
-            }
-            System.out.println("Would you like the chance to pay only half for your order? (Y/N):");
-            String wantDiscount = scanner.nextLine();
-            if (wantDiscount.equalsIgnoreCase("Y")) {
-                isItYourBirthday();
-            } else {
-                makeCardPayment();
-            }
-        }
-        String[] parts = orderID.split("-");
-        int num = Integer.parseInt(parts[2]);
-        num++;
-        orderID = parts[0] + "-" + parts[1] + "-" + num;
-        printReceipt();
-    }
-    public void isItYourBirthday() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            System.out.println("Enter your birthday (yyyy-MM-dd):");
-            String birthdateStr = scanner.nextLine();
-            LocalDate birthdate = LocalDate.parse(birthdateStr);
-            LocalDate today = LocalDate.now();
-            int age = Period.between(birthdate, today).getYears();
-            if (age < 18 && birthdate.getMonth() == today.getMonth() && birthdate.getDayOfMonth() == today.getDayOfMonth()) {
-                System.out.println("Congratulations! You pay only half the price for your order");
-                orderTotal = orderTotal / 2;
-            } else {
-                System.out.println("Too bad! You do not meet the conditions to get our 50% discount");
-            }
-        }
-    }
-    public void makeCardPayment() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            System.out.println("Enter card number:");
-            long cardNumber = scanner.nextLong();
-            scanner.nextLine(); 
-            System.out.println("Enter card expiry date (MM/yy):");
-            String expiryDate = scanner.nextLine();
-            System.out.println("Enter card cvv (3 digits):");
-            int cvv = scanner.nextInt();
-            processCardPayment(cardNumber, expiryDate, cvv);
-        }
-    }
-    public void processCardPayment(long cardNumber, String expiryDate, int cvv) {
-        String cardNumberStr = Long.toString(cardNumber);
-        if (cardNumberStr.length() == 14) {
-            System.out.println("Card accepted");
-        } else {
-            System.out.println("Invalid card");
-        }
-
-        int firstCardDigit = Integer.parseInt(cardNumberStr.substring(0, 1));
-
-        long blacklistedNumber = 12345678901234L;
-        if (cardNumber == blacklistedNumber) {
-            System.out.println("Card is blacklisted. Please use another card");
-        }
-
-        String lastFourDigitsStr = cardNumberStr.substring(cardNumberStr.length() - 4);
-        int lastFourDigits = Integer.parseInt(lastFourDigitsStr);
-
-        StringBuilder cardNumberToDisplay = new StringBuilder();
-        cardNumberToDisplay.append(cardNumberStr.charAt(0));
-        for (int i = 1; i < cardNumberStr.length() - 4; i++) {
-            cardNumberToDisplay.append('*');
-        }
-        cardNumberToDisplay.append(lastFourDigitsStr);
-
-        System.out.println("First card digit: " + firstCardDigit);
-        System.out.println("Last four digits: " + lastFourDigits);
-        System.out.println("Card number to display: " + cardNumberToDisplay);
-    }
-
-    public void makePizza() {
-        System.out.println("Making a pizza with the following ingredients: ");
-        for (String ingredient : pizzaIngredients) {
-            System.out.println("- " + ingredient);
-        }
-        System.out.println("Pizza is ready!");
-    }
-    private void printReceipt() {
-        System.out.println("----- Receipt -----");
-        System.out.println("Store Name: " + storeName);
-        System.out.println("Store Address: " + storeAddress);
-        System.out.println("Order ID: " + orderID);
-        System.out.println("Order Total: $" + orderTotal);
-        System.out.println("-------------------");
-    }
-
-    public void specialOfTheDay(String pizzaOfTheDay, String sideOfTheDay, String specialPrice) {
-        StringBuilder specialInfo = new StringBuilder();
-        specialInfo.append("Today's special: ");
-        specialInfo.append(pizzaOfTheDay);
-        specialInfo.append(" with ");
-        specialInfo.append(sideOfTheDay);
-        specialInfo.append(" for only $");
-        specialInfo.append(specialPrice);
-        System.out.println(specialInfo.toString());
+    @Override
+    public String toString() {
+        return drinkName + ": €" + addToPizzaPrice;
     }
 }
 
-public class Pizza {
+public class PizzaOrderSystem {
+    private static final double PIZZA_BASE_PRICE = 10.0;
+    private static String[] pizzasOrdered = new String[10];
+    private static String[] pizzaSizesOrdered = new String[10];
+    private static String[] sideDishesOrdered = new String[20];
+    private static String[] drinksOrdered = new String[20];
+    private static double totalOrderPrice = 0;
+    private static int pizzaIndex = 0;
+    private static int sideDishIndex = 0;
+    private static int drinkIndex = 0;
+
+    public static void takeOrder() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("Welcome to Slice-o-Heaven Pizzeria. Here’s what we serve:");
+            PizzaSelection[] pizzaSelections = PizzaSelection.values();
+            for (int i = 0; i < pizzaSelections.length; i++) {
+                System.out.println((i + 1) + ". " + pizzaSelections[i]);
+            }
+            System.out.println((pizzaSelections.length + 1) + ". Custom Pizza with a maximum of 10 toppings that you choose");
+            System.out.print("Please enter your choice (1 - " + (pizzaSelections.length + 1) + "). ");
+            int pizzaChoice = scanner.nextInt();
+            scanner.nextLine();
+
+            String pizzaDetails;
+            double pizzaPrice;
+            if (pizzaChoice >= 1 && pizzaChoice <= pizzaSelections.length) {
+                PizzaSelection selectedPizza = pizzaSelections[pizzaChoice - 1];
+                pizzaDetails = selectedPizza.toString();
+                pizzaPrice = selectedPizza.getPrice();
+            } else if (pizzaChoice == pizzaSelections.length + 1) {
+                System.out.println("Available toppings:");
+                PizzaToppings[] toppings = PizzaToppings.values();
+                for (int i = 0; i < toppings.length; i++) {
+                    System.out.println((i + 1) + ". " + toppings[i]);
+                }
+                System.out.print("Enter up to 10 choices (separated by spaces): ");
+                String[] toppingChoices = scanner.nextLine().split(" ");
+                StringBuilder customToppings = new StringBuilder();
+                double customToppingPrice = PIZZA_BASE_PRICE;
+                for (String choice : toppingChoices) {
+                    int toppingIndex = Integer.parseInt(choice) - 1;
+                    if (toppingIndex >= 0 && toppingIndex < toppings.length) {
+                        if (customToppings.length() > 0) {
+                            customToppings.append(", ");
+                        }
+                        customToppings.append(toppings[toppingIndex].getTopping());
+                        customToppingPrice += toppings[toppingIndex].getToppingPrice();
+                    }
+                }
+                pizzaDetails = "Custom Pizza with " + customToppings + ", for €" + customToppingPrice;
+                pizzaPrice = customToppingPrice;
+            } else {
+                System.out.println("Invalid choice. Please try again.");
+                continue;
+            }
+            pizzasOrdered[pizzaIndex++] = pizzaDetails;
+            totalOrderPrice += pizzaPrice;
+
+            System.out.println("Available pizza sizes:");
+            PizzaSize[] sizes = PizzaSize.values();
+            for (int i = 0; i < sizes.length; i++) {
+                System.out.println((i + 1) + ". " + sizes[i]);
+            }
+            System.out.print("Choose a pizza size: ");
+            int sizeChoice = scanner.nextInt();
+            scanner.nextLine();
+            PizzaSize selectedSize = sizes[sizeChoice - 1];
+            pizzaSizesOrdered[pizzaIndex - 1] = selectedSize.toString();
+            totalOrderPrice += selectedSize.getAddToPizzaPrice();
+
+            System.out.println("Available side dishes:");
+            SideDish[] sideDishes = SideDish.values();
+            for (int i = 0; i < sideDishes.length; i++) {
+                System.out.println((i + 1) + ". " + sideDishes[i]);
+            }
+            System.out.print("Choose a side dish: ");
+            int sideDishChoice = scanner.nextInt();
+            scanner.nextLine();
+            SideDish selectedSideDish = sideDishes[sideDishChoice - 1];
+            sideDishesOrdered[sideDishIndex++] = selectedSideDish.toString();
+            totalOrderPrice += selectedSideDish.getAddToPizzaPrice();
+
+            System.out.println("Available drinks:");
+            Drinks[] drinks = Drinks.values();
+            for (int i = 0; i < drinks.length; i++) {
+                System.out.println((i + 1) + ". " + drinks[i]);
+            }
+            System.out.print("Choose a drink: ");
+            int drinkChoice = scanner.nextInt();
+            scanner.nextLine();
+            Drinks selectedDrink = drinks[drinkChoice - 1];
+            drinksOrdered[drinkIndex++] = selectedDrink.toString();
+            totalOrderPrice += selectedDrink.getAddToPizzaPrice();
+
+            System.out.print("Do you want to order more? (yes/no) ");
+            String continueOrder = scanner.nextLine();
+            if (!continueOrder.equalsIgnoreCase("yes")) {
+                break;
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder orderDetails = new StringBuilder("Thank you for dining with Slice-o-Heaven Pizzeria. Your order details are as follows:\n");
+        for (int i = 0; i < pizzaIndex; i++) {
+            orderDetails.append(i + 1).append(". ").append(pizzasOrdered[i]).append("\n");
+            orderDetails.append(pizzaSizesOrdered[i]).append("\n");
+            orderDetails.append(sideDishesOrdered[i]).append("\n");
+            orderDetails.append(drinksOrdered[i]).append("\n");
+        }
+        orderDetails.append("ORDER TOTAL: €").append(totalOrderPrice);
+        return orderDetails.toString();
+    }
+
     public static void main(String[] args) {
-        List<String> pizzaIngredients = new ArrayList<>();
-        pizzaIngredients.add("Tomato Sauce");
-        pizzaIngredients.add("Cheese");
-        pizzaIngredients.add("Pepperoni");
-        List<String> sides = new ArrayList<>();
-        sides.add("Garlic Bread");
-        sides.add("Onion Rings");
-        Map<String, Double> sidePrices = new HashMap<>();
-        sidePrices.put("Garlic Bread", 3.0);
-        sidePrices.put("Onion Rings", 3.5);
-        List<String> drinks = new ArrayList<>();
-        drinks.add("Coke");
-        drinks.add("Sprite");
-        Map<String, Double> drinkPrices = new HashMap<>();
-        drinkPrices.put("Coke", 2.0);
-        drinkPrices.put("Sprite", 2.0);
-        
-        SliceoHeaven pizzeria = new SliceoHeaven("Slice - o - Heaven", "123 Pizza St", "info@sliceoheaven.com", "555-1234",
-                "Pizza, Sides, Drinks", pizzaIngredients, 10.0, sides, sidePrices, drinks, drinkPrices);
-        pizzeria.takeOrder();
-        
-        pizzeria.makePizza();
-        pizzeria.specialOfTheDay("Margherita Pizza", "Fries", "12.99");
+        takeOrder();
+        PizzaOrderSystem orderSystem = new PizzaOrderSystem();
+        System.out.println(orderSystem);
     }
 }
