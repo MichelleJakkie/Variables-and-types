@@ -1,0 +1,46 @@
+import java.io.*;
+
+public class FormatGroceries {
+    public static void main(String[] args) {
+        String inputPath = "Groceries.txt";
+        String outputPath = "FormattedGroceries.txt";
+        double total = 0.0;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputPath));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
+            writer.write("***********************************************************");
+            writer.newLine();
+            writer.write("ID Item Quantity(KG) Price(€)");
+            writer.newLine();
+            writer.write("********************************************************");
+            writer.newLine();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length != 4) continue;
+
+                int id = Integer.parseInt(parts[0]);
+                String item = parts[1].trim();
+                double quantity = Double.parseDouble(parts[2].replace("KG", "").trim());
+                double price = Double.parseDouble(parts[3]);
+
+                total += quantity * price;
+                String formattedLine = String.format(
+                    "%-5d %-15s %-15.2f %-10.2f",
+                    id, item, quantity, price
+                );
+                writer.write(formattedLine);
+                writer.newLine();
+            }
+            writer.write("***********************************************************");
+            writer.newLine();
+            writer.write("The grocery shopping total is: €" + String.format("%.2f", total));
+            writer.newLine();
+            writer.write("***********************************************************");
+
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}
